@@ -24,7 +24,7 @@
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
         /* SIDEBAR */
-        aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+        aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; flex-shrink: 0; }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
         .brand-logo { width: 38px; height: 38px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
         .brand-title h1 { font-size: 18px; font-weight: 700; color: var(--text-main); }
@@ -36,7 +36,7 @@
 
         /* MAIN CONTAINER */
         .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
-        header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+        header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; }
         .search-bar { background: var(--bg-main); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; width: 320px; display: flex; align-items: center; gap: 8px; font-size: 13px; }
         .search-bar input { border: none; background: transparent; outline: none; width: 100%; color: var(--text-main); }
         .user-profile { display: flex; align-items: center; gap: 12px; }
@@ -50,8 +50,11 @@
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .page-title h2 { font-size: 22px; font-weight: 700; }
         .page-title p { font-size: 13px; color: var(--text-muted); }
-        .btn { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn:hover { background: var(--primary-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+        .btn-outline:hover { background: var(--accent-rose); }
+        .btn-sm { padding: 6px 12px; font-size: 11px; }
 
         /* STATS CARDS */
         .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
@@ -75,14 +78,25 @@
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         th { background: #F9F5F0; color: var(--text-muted); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; cursor: pointer; }
         .badge.selesai, .badge.lunas { background: #E2ECE9; color: #3B5D50; }
         .badge.diproses, .badge.pending { background: #FEF3E2; color: #B37D24; }
         .badge.dikirim { background: #E8F1F5; color: #326280; }
         .badge.menunggu { background: #FCE8E6; color: #A63A3A; }
 
         .chart-container { height: 180px; width: 100%; }
-        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: white; padding: 12px 24px; border-radius: 8px; font-size: 13px; display: none; z-index: 1000; }
+
+        /* MODAL POPUP */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-card { background: var(--card-bg); border-radius: 12px; padding: 24px; width: 440px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .modal-header h3 { font-size: 16px; font-weight: 700; }
+        .close-btn { cursor: pointer; font-size: 18px; color: var(--text-muted); }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
+        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: var(--bg-main); }
+        
+        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: white; padding: 12px 24px; border-radius: 8px; font-size: 13px; display: none; z-index: 3000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     </style>
 </head>
 <body>
@@ -117,7 +131,7 @@
         <header>
             <div class="search-bar">
                 <span>🔍</span>
-                <input type="text" placeholder="Cari data di db_toko_baju_online...">
+                <input type="text" id="globalSearch" placeholder="Cari data di db_toko_baju_online..." onkeyup="filterTables()">
             </div>
             <div class="user-profile">
                 <div class="avatar">P</div>
@@ -142,22 +156,22 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <h3>Total Produk</h3>
-                        <div class="value">5</div>
+                        <div class="value" id="stat-produk">5</div>
                         <div class="sub">↑ 5 Kategori Aktif</div>
                     </div>
                     <div class="stat-card">
                         <h3>Total Pelanggan</h3>
-                        <div class="value">5</div>
+                        <div class="value" id="stat-pelanggan">5</div>
                         <div class="sub">↑ Terdaftar di SQL</div>
                     </div>
                     <div class="stat-card">
                         <h3>Total Pesanan</h3>
-                        <div class="value">5</div>
+                        <div class="value" id="stat-pesanan">5</div>
                         <div class="sub">↑ 100% Sesuai SQL</div>
                     </div>
                     <div class="stat-card">
                         <h3>Total Penjualan</h3>
-                        <div class="value">Rp 1.529.000</div>
+                        <div class="value" id="stat-penjualan">Rp 1.529.000</div>
                         <div class="sub">↑ Sum Subtotal Detail</div>
                     </div>
                 </div>
@@ -221,7 +235,7 @@
                         <div>
                             <h3>Fashion is a form of self-care</h3>
                             <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
-                            <button class="btn" style="margin-top: 12px;" onclick="showToast('Katalog Koleksi Dibuka')">Lihat Koleksi</button>
+                            <button class="btn" style="margin-top: 12px;" onclick="showToast('Katalog Koleksi Berhasil Dibuka')">Lihat Koleksi</button>
                         </div>
                     </div>
                 </div>
@@ -231,19 +245,19 @@
             <div id="produk" class="view-section">
                 <div class="page-header">
                     <div class="page-title"><h2>Data Produk</h2><p>Daftar catalog baju dari tabel Produk</p></div>
-                    <button class="btn" onclick="showToast('Form Tambah Produk Diberikan')">+ Tambah Produk</button>
+                    <button class="btn" onclick="openModal('modalProduk')">+ Tambah Produk</button>
                 </div>
                 <div class="table-card">
-                    <table>
+                    <table id="tableProduk">
                         <thead>
-                            <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Status</th></tr>
+                            <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Aksi</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><span class="badge selesai">Aktif</span></td></tr>
-                            <tr><td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><span class="badge selesai">Aktif</span></td></tr>
-                            <tr><td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><span class="badge selesai">Aktif</span></td></tr>
-                            <tr><td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><span class="badge selesai">Aktif</span></td></tr>
-                            <tr><td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                            <tr><td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -253,18 +267,19 @@
             <div id="pelanggan" class="view-section">
                 <div class="page-header">
                     <div class="page-title"><h2>Data Pelanggan</h2><p>Daftar pembeli terdaftar di SQL</p></div>
+                    <button class="btn" onclick="openModal('modalPelanggan')">+ Tambah Pelanggan</button>
                 </div>
                 <div class="table-card">
-                    <table>
+                    <table id="tablePelanggan">
                         <thead>
-                            <tr><th>ID</th><th>Nama Pelanggan</th><th>Email</th><th>No. Telepon</th><th>Kota</th></tr>
+                            <tr><th>ID</th><th>Nama Pelanggan</th><th>Email</th><th>No. Telepon</th><th>Kota</th><th>Aksi</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td>Budi Santoso</td><td>budi@email.com</td><td>081234567890</td><td>Kudus</td></tr>
-                            <tr><td>2</td><td>Siti Aminah</td><td>siti@email.com</td><td>082345678901</td><td>Semarang</td></tr>
-                            <tr><td>3</td><td>Andi Wijaya</td><td>andi@email.com</td><td>083456789012</td><td>Jepara</td></tr>
-                            <tr><td>4</td><td>Dewi Lestari</td><td>dewi@email.com</td><td>084567890123</td><td>Demak</td></tr>
-                            <tr><td>5</td><td>Rizky Pratama</td><td>rizky@email.com</td><td>085678901234</td><td>Pati</td></tr>
+                            <tr><td>1</td><td>Budi Santoso</td><td>budi@email.com</td><td>081234567890</td><td>Kudus</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>2</td><td>Siti Aminah</td><td>siti@email.com</td><td>082345678901</td><td>Semarang</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>3</td><td>Andi Wijaya</td><td>andi@email.com</td><td>083456789012</td><td>Jepara</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>4</td><td>Dewi Lestari</td><td>dewi@email.com</td><td>084567890123</td><td>Demak</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                            <tr><td>5</td><td>Rizky Pratama</td><td>rizky@email.com</td><td>085678901234</td><td>Pati</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -276,16 +291,16 @@
                     <div class="page-title"><h2>Data Pesanan</h2><p>Daftar transaksi pesanan baju</p></div>
                 </div>
                 <div class="table-card">
-                    <table>
+                    <table id="tablePesanan">
                         <thead>
-                            <tr><th>Kode</th><th>Pelanggan</th><th>Total Harga</th><th>Alamat Pengiriman</th><th>Status</th></tr>
+                            <tr><th>Kode</th><th>Pelanggan</th><th>Total Harga</th><th>Alamat Pengiriman</th><th>Status (Klik Ubah)</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>#PS001</td><td>Budi Santoso</td><td>Rp 293.000</td><td>Jl. Merdeka No. 10, Kudus</td><td><span class="badge selesai">Selesai</span></td></tr>
-                            <tr><td>#PS002</td><td>Siti Aminah</td><td>Rp 328.000</td><td>Jl. Melati No. 5, Semarang</td><td><span class="badge diproses">Diproses</span></td></tr>
-                            <tr><td>#PS003</td><td>Andi Wijaya</td><td>Rp 267.000</td><td>Jl. Mawar No. 21, Jepara</td><td><span class="badge dikirim">Dikirim</span></td></tr>
-                            <tr><td>#PS004</td><td>Dewi Lestari</td><td>Rp 304.000</td><td>Jl. Kenanga No. 7, Demak</td><td><span class="badge menunggu">Menunggu Bayar</span></td></tr>
-                            <tr><td>#PS005</td><td>Rizky Pratama</td><td>Rp 337.000</td><td>Jl. Anggrek No. 3, Pati</td><td><span class="badge selesai">Selesai</span></td></tr>
+                            <tr><td>#PS001</td><td>Budi Santoso</td><td>Rp 293.000</td><td>Jl. Merdeka No. 10, Kudus</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
+                            <tr><td>#PS002</td><td>Siti Aminah</td><td>Rp 328.000</td><td>Jl. Melati No. 5, Semarang</td><td><span class="badge diproses" onclick="toggleStatus(this)">Diproses</span></td></tr>
+                            <tr><td>#PS003</td><td>Andi Wijaya</td><td>Rp 267.000</td><td>Jl. Mawar No. 21, Jepara</td><td><span class="badge dikirim" onclick="toggleStatus(this)">Dikirim</span></td></tr>
+                            <tr><td>#PS004</td><td>Dewi Lestari</td><td>Rp 304.000</td><td>Jl. Kenanga No. 7, Demak</td><td><span class="badge menunggu" onclick="toggleStatus(this)">Menunggu Bayar</span></td></tr>
+                            <tr><td>#PS005</td><td>Rizky Pratama</td><td>Rp 337.000</td><td>Jl. Anggrek No. 3, Pati</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -295,16 +310,16 @@
             <div id="pembayaran" class="view-section">
                 <div class="page-header"><div class="page-title"><h2>Data Pembayaran</h2><p>Status transaksi pembayaran</p></div></div>
                 <div class="table-card">
-                    <table>
+                    <table id="tablePembayaran">
                         <thead>
-                            <tr><th>ID Pesanan</th><th>Metode Bayar</th><th>Jumlah Bayar</th><th>Status Bayar</th></tr>
+                            <tr><th>ID Pesanan</th><th>Metode Bayar</th><th>Jumlah Bayar</th><th>Status Bayar (Klik Ubah)</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>1</td><td>Transfer Bank</td><td>Rp 293.000</td><td><span class="badge lunas">Lunas</span></td></tr>
-                            <tr><td>2</td><td>E-Wallet</td><td>Rp 328.000</td><td><span class="badge lunas">Lunas</span></td></tr>
-                            <tr><td>3</td><td>COD</td><td>Rp 267.000</td><td><span class="badge pending">Pending</span></td></tr>
-                            <tr><td>4</td><td>Transfer Bank</td><td>Rp 304.000</td><td><span class="badge pending">Pending</span></td></tr>
-                            <tr><td>5</td><td>Kartu Kredit</td><td>Rp 337.000</td><td><span class="badge lunas">Lunas</span></td></tr>
+                            <tr><td>1</td><td>Transfer Bank</td><td>Rp 293.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
+                            <tr><td>2</td><td>E-Wallet</td><td>Rp 328.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
+                            <tr><td>3</td><td>COD</td><td>Rp 267.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
+                            <tr><td>4</td><td>Transfer Bank</td><td>Rp 304.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
+                            <tr><td>5</td><td>Kartu Kredit</td><td>Rp 337.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -312,7 +327,10 @@
 
             <!-- 6. LAPORAN PENJUALAN -->
             <div id="laporan" class="view-section">
-                <div class="page-header"><div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial</p></div></div>
+                <div class="page-header">
+                    <div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial</p></div>
+                    <button class="btn" onclick="exportLaporan()">📥 Download Laporan (CSV)</button>
+                </div>
                 <div class="stats-grid">
                     <div class="stat-card"><h3>Total Pendapatan</h3><div class="value">Rp 1.529.000</div></div>
                     <div class="stat-card"><h3>Total Transaksi</h3><div class="value">5 Pesanan</div></div>
@@ -341,9 +359,44 @@
         </div>
     </div>
 
+    <!-- MODAL TAMBAH PRODUK -->
+    <div id="modalProduk" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Tambah Produk Baru</h3>
+                <span class="close-btn" onclick="closeModal('modalProduk')">&times;</span>
+            </div>
+            <form onsubmit="tambahProduk(event)">
+                <div class="form-group"><label>Nama Produk</label><input type="text" id="pNama" required placeholder="Contoh: Kemeja Oversize"></div>
+                <div class="form-group"><label>Kategori</label><input type="text" id="pKategori" required placeholder="Contoh: Kemeja"></div>
+                <div class="form-group"><label>Harga (Rp)</label><input type="number" id="pHarga" required placeholder="150000"></div>
+                <div class="form-group"><label>Berat (Gram)</label><input type="text" id="pBerat" required placeholder="300g"></div>
+                <button type="submit" class="btn" style="width: 100%;">Simpan ke Database</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH PELANGGAN -->
+    <div id="modalPelanggan" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Tambah Pelanggan Baru</h3>
+                <span class="close-btn" onclick="closeModal('modalPelanggan')">&times;</span>
+            </div>
+            <form onsubmit="tambahPelanggan(event)">
+                <div class="form-group"><label>Nama Pelanggan</label><input type="text" id="cNama" required placeholder="Contoh: Anastasia"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="cEmail" required placeholder="anastasia@email.com"></div>
+                <div class="form-group"><label>No Telepon</label><input type="text" id="cHp" required placeholder="08123456789"></div>
+                <div class="form-group"><label>Kota</label><input type="text" id="cKota" required placeholder="Kudus"></div>
+                <button type="submit" class="btn" style="width: 100%;">Simpan Pelanggan</button>
+            </form>
+        </div>
+    </div>
+
     <div id="toast">Berhasil!</div>
 
     <script>
+        // NAVIGATION & TAB SWITCHING
         function switchTab(tabId, element) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -351,11 +404,119 @@
             element.classList.add('active');
         }
 
+        // TOAST NOTIFICATION
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg;
             t.style.display = 'block';
-            setTimeout(() => { t.style.display = 'none'; }, 2000);
+            setTimeout(() => { t.style.display = 'none'; }, 2500);
+        }
+
+        // SEARCH GLOBAL FILTER
+        function filterTables() {
+            const query = document.getElementById('globalSearch').value.toLowerCase();
+            const activeView = document.querySelector('.view-section.active');
+            const rows = activeView.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        }
+
+        // MODAL CONTROL
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // ADD PRODUCT
+        function tambahProduk(e) {
+            e.preventDefault();
+            const nama = document.getElementById('pNama').value;
+            const kat = document.getElementById('pKategori').value;
+            const hrga = parseInt(document.getElementById('pHarga').value).toLocaleString('id-ID');
+            const berat = document.getElementById('pBerat').value;
+
+            const table = document.getElementById('tableProduk').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            const count = table.rows.length;
+            
+            newRow.innerHTML = `<td>${count}</td><td><b>${nama}</b></td><td>${kat}</td><td>Rp ${hrga}</td><td>${berat}</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td>`;
+            
+            closeModal('modalProduk');
+            showToast(`Produk '${nama}' Berhasil Ditambahkan!`);
+            document.getElementById('stat-produk').innerText = count;
+            e.target.reset();
+        }
+
+        // ADD CUSTOMER
+        function tambahPelanggan(e) {
+            e.preventDefault();
+            const nama = document.getElementById('cNama').value;
+            const email = document.getElementById('cEmail').value;
+            const hp = document.getElementById('cHp').value;
+            const kota = document.getElementById('cKota').value;
+
+            const table = document.getElementById('tablePelanggan').getElementsByTagName('tbody')[0];
+            const newRow = table.insertRow();
+            const count = table.rows.length;
+
+            newRow.innerHTML = `<td>${count}</td><td>${nama}</td><td>${email}</td><td>${hp}</td><td>${kota}</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td>`;
+            
+            closeModal('modalPelanggan');
+            showToast(`Pelanggan '${nama}' Berhasil Ditambahkan!`);
+            document.getElementById('stat-pelanggan').innerText = count;
+            e.target.reset();
+        }
+
+        // DELETE ROW
+        function hapusBaris(btn) {
+            if(confirm('Apakah Anda yakin ingin menghapus data ini dari UI?')) {
+                const row = btn.parentNode.parentNode;
+                row.parentNode.removeChild(row);
+                showToast('Data berhasil dihapus');
+            }
+        }
+
+        // TOGGLE STATUS PESANAN (UX INTERAKTIF)
+        function toggleStatus(badge) {
+            if(badge.innerText === 'Selesai') {
+                badge.innerText = 'Diproses';
+                badge.className = 'badge diproses';
+            } else if(badge.innerText === 'Diproses') {
+                badge.innerText = 'Dikirim';
+                badge.className = 'badge dikirim';
+            } else if(badge.innerText === 'Dikirim') {
+                badge.innerText = 'Menunggu Bayar';
+                badge.className = 'badge menunggu';
+            } else {
+                badge.innerText = 'Selesai';
+                badge.className = 'badge selesai';
+            }
+            showToast(`Status Pesanan diubah ke: ${badge.innerText}`);
+        }
+
+        // TOGGLE STATUS BAYAR
+        function toggleBayar(badge) {
+            if(badge.innerText === 'Lunas') {
+                badge.innerText = 'Pending';
+                badge.className = 'badge pending';
+            } else {
+                badge.innerText = 'Lunas';
+                badge.className = 'badge lunas';
+            }
+            showToast(`Status Bayar diubah ke: ${badge.innerText}`);
+        }
+
+        // DOWNLOAD CSV LAPORAN
+        function exportLaporan() {
+            const csvContent = "data:text/csv;charset=utf-8,Laporan Penjualan Maison Elora\nTotal Pendapatan,Rp 1.529.000\nTotal Pesanan,5\nStatus,OK";
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Laporan_Penjualan_MaisonElora.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Laporan CSV Berhasil Diunduh!');
         }
     </script>
 </body>
