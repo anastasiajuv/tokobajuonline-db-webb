@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maison Elora - Admin Dashboard (db_toko_baju_online)</title>
+    <style>
+        :root {
+            --bg-main: #FAF6F0;
+            --sidebar-bg: #F4EBE1;
+            --card-bg: #FFFFFF;
+            --text-main: #3D332A;
+            --text-muted: #8C7B6E;
+            --primary: #9C7170;
+            --primary-hover: #835C5B;
+            --accent-rose: #E8D3D1;
+            --border: #E8DFD8;
+            --success: #637B6E;
+            --warning: #C28E38;
+            --danger: #B45B5B;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR */
+        aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
+        .brand-logo { width: 38px; height: 38px; background: var(--primary); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
+        .brand-title h1 { font-size: 18px; font-weight: 700; color: var(--text-main); }
+        .brand-title p { font-size: 11px; color: var(--text-muted); }
+        
+        .nav-menu { display: flex; flex-direction: column; gap: 6px; list-style: none; flex-grow: 1; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .nav-item:hover, .nav-item.active { background-color: var(--accent-rose); color: var(--primary); font-weight: 600; }
+
+        /* MAIN CONTAINER */
+        .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
+        header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+        .search-bar { background: var(--bg-main); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; width: 320px; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+        .search-bar input { border: none; background: transparent; outline: none; width: 100%; color: var(--text-main); }
+        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        /* CONTENT VIEWS */
+        .content { flex-grow: 1; overflow-y: auto; padding: 28px 32px; }
+        .view-section { display: none; }
+        .view-section.active { display: block; }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title h2 { font-size: 22px; font-weight: 700; }
+        .page-title p { font-size: 13px; color: var(--text-muted); }
+        .btn { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn:hover { background: var(--primary-hover); }
+
+        /* STATS CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 18px; }
+        .stat-card h3 { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+        .stat-card .value { font-size: 22px; font-weight: 700; }
+        .stat-card .sub { font-size: 11px; color: var(--success); font-weight: 600; margin-top: 4px; }
+
+        /* GRID DASHBOARD LAYOUT */
+        .dashboard-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px; }
+        .card-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        .card-title { font-size: 14px; font-weight: 700; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* PROMO BANNER */
+        .promo-banner { background: linear-gradient(135deg, #F4EBE1 0%, #E8D3D1 100%); border-radius: 12px; padding: 24px; display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+        .promo-banner h3 { font-size: 18px; color: var(--text-main); font-weight: 700; }
+        .promo-banner p { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+        /* TABLE DESIGN */
+        .table-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { background: #F9F5F0; color: var(--text-muted); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; }
+        .badge.selesai, .badge.lunas { background: #E2ECE9; color: #3B5D50; }
+        .badge.diproses, .badge.pending { background: #FEF3E2; color: #B37D24; }
+        .badge.dikirim { background: #E8F1F5; color: #326280; }
+        .badge.menunggu { background: #FCE8E6; color: #A63A3A; }
+
+        .chart-container { height: 180px; width: 100%; }
+        #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: white; padding: 12px 24px; border-radius: 8px; font-size: 13px; display: none; z-index: 1000; }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside>
+        <div>
+            <div class="brand">
+                <div class="brand-logo">ME</div>
+                <div class="brand-title">
+                    <h1>Maison Elora</h1>
+                    <p>Style for Every Moment</p>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
+                <li class="nav-item" onclick="switchTab('produk', this)">👗 Manajemen Produk</li>
+                <li class="nav-item" onclick="switchTab('pelanggan', this)">👥 Manajemen Pelanggan</li>
+                <li class="nav-item" onclick="switchTab('pesanan', this)">📦 Manajemen Pesanan</li>
+                <li class="nav-item" onclick="switchTab('pembayaran', this)">💳 Pembayaran</li>
+                <li class="nav-item" onclick="switchTab('laporan', this)">📈 Laporan Penjualan</li>
+                <li class="nav-item" onclick="switchTab('admin', this)">🛡️ Kelola Admin</li>
+            </ul>
+        </div>
+        <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 12px;">
+            DBMS: MS SQL Server<br>Kelompok 5 (Prabowo, Tasi, Uyun)
+        </div>
+    </aside>
+
+    <!-- MAIN CONTAINER -->
+    <div class="main-container">
+        <header>
+            <div class="search-bar">
+                <span>🔍</span>
+                <input type="text" placeholder="Cari data di db_toko_baju_online...">
+            </div>
+            <div class="user-profile">
+                <div class="avatar">P</div>
+                <div>
+                    <div style="font-size: 13px; font-weight: 600;">Prabowo (Owner)</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">db_toko_baju_online</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- 1. DASHBOARD UTAMA -->
+            <div id="dashboard" class="view-section active">
+                <div class="page-header">
+                    <div class="page-title">
+                        <h2>Dashboard Utama</h2>
+                        <p>Selamat datang kembali, Admin Prabowo!</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Produk</h3>
+                        <div class="value">5</div>
+                        <div class="sub">↑ 5 Kategori Aktif</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Pelanggan</h3>
+                        <div class="value">5</div>
+                        <div class="sub">↑ Terdaftar di SQL</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Pesanan</h3>
+                        <div class="value">5</div>
+                        <div class="sub">↑ 100% Sesuai SQL</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Penjualan</h3>
+                        <div class="value">Rp 1.529.000</div>
+                        <div class="sub">↑ Sum Subtotal Detail</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card-box">
+                        <div class="card-title">Grafik Penjualan (Toko Baju Online)</div>
+                        <div class="chart-container">
+                            <svg viewBox="0 0 500 150" style="width: 100%; height: 100%;">
+                                <path d="M 0,110 L 100,80 L 200,95 L 300,40 L 400,60 L 500,20" fill="none" stroke="#9C7170" stroke-width="3"/>
+                                <circle cx="0" cy="110" r="4" fill="#9C7170"/>
+                                <circle cx="100" cy="80" r="4" fill="#9C7170"/>
+                                <circle cx="200" cy="95" r="4" fill="#9C7170"/>
+                                <circle cx="300" cy="40" r="4" fill="#9C7170"/>
+                                <circle cx="400" cy="60" r="4" fill="#9C7170"/>
+                                <circle cx="500" cy="20" r="4" fill="#9C7170"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="card-box">
+                        <div class="card-title">Pesanan Terbaru</div>
+                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div><b>#PS001</b> - Budi Santoso</div>
+                                <div>Rp 293.000 <span class="badge selesai">Selesai</span></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div><b>#PS002</b> - Siti Aminah</div>
+                                <div>Rp 328.000 <span class="badge diproses">Diproses</span></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div><b>#PS003</b> - Andi Wijaya</div>
+                                <div>Rp 267.000 <span class="badge dikirim">Dikirim</span></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div><b>#PS004</b> - Dewi Lestari</div>
+                                <div>Rp 304.000 <span class="badge menunggu">Menunggu</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="card-box">
+                        <div class="card-title">Stok Produk (vw_stok_produk)</div>
+                        <table style="font-size: 12px;">
+                            <thead>
+                                <tr><th>Produk</th><th>Ukuran</th><th>Warna</th><th>Stok</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Kaos Polos Basic</td><td>M</td><td>Hitam</td><td><b>50</b></td></tr>
+                                <tr><td>Kaos Polos Basic</td><td>L</td><td>Putih</td><td><b>40</b></td></tr>
+                                <tr><td>Celana Chino</td><td>32</td><td>Krem</td><td><b>30</b></td></tr>
+                                <tr><td>Kemeja Flanel</td><td>M</td><td>Merah</td><td><b>25</b></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="promo-banner">
+                        <div>
+                            <h3>Fashion is a form of self-care</h3>
+                            <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
+                            <button class="btn" style="margin-top: 12px;" onclick="showToast('Katalog Koleksi Dibuka')">Lihat Koleksi</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. PRODUK -->
+            <div id="produk" class="view-section">
+                <div class="page-header">
+                    <div class="page-title"><h2>Data Produk</h2><p>Daftar catalog baju dari tabel Produk</p></div>
+                    <button class="btn" onclick="showToast('Form Tambah Produk Diberikan')">+ Tambah Produk</button>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                            <tr><td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                            <tr><td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                            <tr><td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                            <tr><td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><span class="badge selesai">Aktif</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 3. PELANGGAN -->
+            <div id="pelanggan" class="view-section">
+                <div class="page-header">
+                    <div class="page-title"><h2>Data Pelanggan</h2><p>Daftar pembeli terdaftar di SQL</p></div>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr><th>ID</th><th>Nama Pelanggan</th><th>Email</th><th>No. Telepon</th><th>Kota</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Budi Santoso</td><td>budi@email.com</td><td>081234567890</td><td>Kudus</td></tr>
+                            <tr><td>2</td><td>Siti Aminah</td><td>siti@email.com</td><td>082345678901</td><td>Semarang</td></tr>
+                            <tr><td>3</td><td>Andi Wijaya</td><td>andi@email.com</td><td>083456789012</td><td>Jepara</td></tr>
+                            <tr><td>4</td><td>Dewi Lestari</td><td>dewi@email.com</td><td>084567890123</td><td>Demak</td></tr>
+                            <tr><td>5</td><td>Rizky Pratama</td><td>rizky@email.com</td><td>085678901234</td><td>Pati</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 4. PESANAN -->
+            <div id="pesanan" class="view-section">
+                <div class="page-header">
+                    <div class="page-title"><h2>Data Pesanan</h2><p>Daftar transaksi pesanan baju</p></div>
+                </div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr><th>Kode</th><th>Pelanggan</th><th>Total Harga</th><th>Alamat Pengiriman</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>#PS001</td><td>Budi Santoso</td><td>Rp 293.000</td><td>Jl. Merdeka No. 10, Kudus</td><td><span class="badge selesai">Selesai</span></td></tr>
+                            <tr><td>#PS002</td><td>Siti Aminah</td><td>Rp 328.000</td><td>Jl. Melati No. 5, Semarang</td><td><span class="badge diproses">Diproses</span></td></tr>
+                            <tr><td>#PS003</td><td>Andi Wijaya</td><td>Rp 267.000</td><td>Jl. Mawar No. 21, Jepara</td><td><span class="badge dikirim">Dikirim</span></td></tr>
+                            <tr><td>#PS004</td><td>Dewi Lestari</td><td>Rp 304.000</td><td>Jl. Kenanga No. 7, Demak</td><td><span class="badge menunggu">Menunggu Bayar</span></td></tr>
+                            <tr><td>#PS005</td><td>Rizky Pratama</td><td>Rp 337.000</td><td>Jl. Anggrek No. 3, Pati</td><td><span class="badge selesai">Selesai</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 5. PEMBAYARAN -->
+            <div id="pembayaran" class="view-section">
+                <div class="page-header"><div class="page-title"><h2>Data Pembayaran</h2><p>Status transaksi pembayaran</p></div></div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr><th>ID Pesanan</th><th>Metode Bayar</th><th>Jumlah Bayar</th><th>Status Bayar</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Transfer Bank</td><td>Rp 293.000</td><td><span class="badge lunas">Lunas</span></td></tr>
+                            <tr><td>2</td><td>E-Wallet</td><td>Rp 328.000</td><td><span class="badge lunas">Lunas</span></td></tr>
+                            <tr><td>3</td><td>COD</td><td>Rp 267.000</td><td><span class="badge pending">Pending</span></td></tr>
+                            <tr><td>4</td><td>Transfer Bank</td><td>Rp 304.000</td><td><span class="badge pending">Pending</span></td></tr>
+                            <tr><td>5</td><td>Kartu Kredit</td><td>Rp 337.000</td><td><span class="badge lunas">Lunas</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 6. LAPORAN PENJUALAN -->
+            <div id="laporan" class="view-section">
+                <div class="page-header"><div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial</p></div></div>
+                <div class="stats-grid">
+                    <div class="stat-card"><h3>Total Pendapatan</h3><div class="value">Rp 1.529.000</div></div>
+                    <div class="stat-card"><h3>Total Transaksi</h3><div class="value">5 Pesanan</div></div>
+                </div>
+            </div>
+
+            <!-- 7. KELOLA ADMIN -->
+            <div id="admin" class="view-section">
+                <div class="page-header"><div class="page-title"><h2>Manajemen Admin (Kelompok 5)</h2><p>Daftar akun admin & role SQL</p></div></div>
+                <div class="table-card">
+                    <table>
+                        <thead>
+                            <tr><th>ID Admin</th><th>Nama Admin</th><th>Username</th><th>Peran (Role SQL)</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1</td><td>Prabowo</td><td>prabowo</td><td><b>Owner</b> (role_owner)</td></tr>
+                            <tr><td>2</td><td>Tasi</td><td>tasi</td><td><b>Staff</b> (role_staff)</td></tr>
+                            <tr><td>3</td><td>Uyun</td><td>uyun</td><td><b>Staff</b> (role_staff)</td></tr>
+                            <tr><td>4</td><td>Rina</td><td>rina</td><td><b>Staff</b> (role_staff)</td></tr>
+                            <tr><td>5</td><td>Dimas</td><td>dimas</td><td><b>Staff</b> (role_staff)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="toast">Berhasil!</div>
+
+    <script>
+        function switchTab(tabId, element) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 2000);
+        }
+    </script>
+</body>
+</html>
