@@ -91,6 +91,9 @@
         .clickable-row { cursor: pointer; transition: 0.2s; }
         .clickable-row:hover { background-color: var(--bg-main); }
 
+        .katalog-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; background: var(--bg-main); border-radius: 8px; font-size: 13px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .katalog-item:hover { border-color: var(--primary); background: #FAF0EC; }
+
         .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; cursor: pointer; }
         .badge.selesai, .badge.lunas { background: #E2ECE9; color: #3B5D50; }
         .badge.diproses, .badge.pending { background: #FEF3E2; color: #B37D24; }
@@ -106,7 +109,7 @@
 
         /* MODAL POPUP */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        .modal-card { background: var(--card-bg); border-radius: 12px; padding: 24px; width: 440px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal-card { background: var(--card-bg); border-radius: 16px; padding: 24px; width: 440px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .modal-header h3 { font-size: 16px; font-weight: 700; }
         .close-btn { cursor: pointer; font-size: 18px; color: var(--text-muted); }
@@ -114,6 +117,34 @@
         .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: var(--bg-main); }
         
+        /* DETAIL PRODUK BOARD LAYOUT (EXACT UI UX) */
+        .product-detail-grid { display: grid; grid-template-columns: 240px 1fr; gap: 24px; text-align: left; }
+        .product-gallery { display: flex; gap: 12px; }
+        .thumb-list { display: flex; flex-direction: column; gap: 8px; }
+        .thumb-img { width: 44px; height: 54px; border-radius: 6px; border: 1px solid var(--border); background: #F4EBE1; display: flex; justify-content: center; align-items: center; cursor: pointer; font-size: 18px; }
+        .thumb-img.active { border-color: var(--primary); }
+        .main-img-box { width: 180px; height: 220px; border-radius: 12px; background: #E8D3D1; display: flex; align-items: center; justify-content: center; font-size: 48px; border: 1px solid var(--border); }
+        
+        .product-info-box h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+        .product-info-box .category-tag { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+        .product-info-box .price-tag { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .product-info-box .stock-tag { font-size: 12px; color: var(--success); font-weight: 600; margin-bottom: 12px; }
+        .product-info-box .desc-text { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px; }
+        
+        .opt-title { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; }
+        .size-selector { display: flex; gap: 8px; margin-bottom: 14px; }
+        .size-box { width: 32px; height: 32px; border-radius: 8px; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; cursor: pointer; background: var(--bg-main); }
+        .size-box.active { border-color: var(--primary); background: var(--accent-rose); color: var(--primary); }
+        
+        .color-selector { display: flex; gap: 10px; margin-bottom: 18px; }
+        .color-dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; }
+        .color-dot.active { border-color: var(--primary); }
+        
+        .qty-cart-row { display: flex; gap: 12px; align-items: center; }
+        .qty-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-main); overflow: hidden; }
+        .qty-btn { width: 32px; height: 34px; border: none; background: transparent; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .qty-val { width: 32px; text-align: center; font-size: 13px; font-weight: 600; }
+
         #toast { position: fixed; bottom: 20px; right: 20px; background: var(--text-main); color: white; padding: 12px 24px; border-radius: 8px; font-size: 13px; display: none; z-index: 3000; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     </style>
 </head>
@@ -288,7 +319,7 @@
                             </div>
 
                             <div class="promo-banner">
-                                div>
+                                <div>
                                     <h3>Fashion is a form of self-care</h3>
                                     <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
                                     <button class="btn" style="margin-top: 12px;" onclick="openModal('modalKoleksi')">Lihat Koleksi</button>
@@ -300,7 +331,7 @@
                     <!-- 2. PRODUK -->
                     <div id="produk" class="view-section">
                         <div class="page-header">
-                            <div class="page-title"><h2>Data Produk</h2><p>Klik salah satu baris produk untuk melihat Detail Produk (Varian & Harga)</p></div>
+                            <div class="page-title"><h2>Data Produk</h2><p>Klik salah satu baris produk untuk melihat Tampilan Detail Produk UI/UX</p></div>
                             <button class="btn" onclick="openModal('modalProduk')">+ Tambah Produk</button>
                         </div>
                         <div class="table-card">
@@ -309,19 +340,19 @@
                                     <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Aksi</th></tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="clickable-row" onclick="showProductDetail('Kaos Polos Basic', 'Kaos Katun Combed 30s', 'Rp 59.000', '200g', 'M (Hitam: 50), L (Putih: 40)')">
+                                    <tr class="clickable-row" onclick="openProductBoard('Kaos Polos Basic', 'Kaos', 'Rp 59.000', '90', 'Kaos katun combed 30s adem dan nyaman untuk daily wear.', '👔')">
                                         <td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
                                     </tr>
-                                    <tr class="clickable-row" onclick="showProductDetail('Kemeja Flanel', 'Kemeja flanel kotak-kotak', 'Rp 129.000', '350g', 'M (Merah: 25), L (Biru: 20)')">
+                                    <tr class="clickable-row" onclick="openProductBoard('Kemeja Flanel', 'Kemeja', 'Rp 129.000', '45', 'Kemeja flanel motif kotak-kotak elegan dan bahan lembut.', '👔')">
                                         <td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
                                     </tr>
-                                    <tr class="clickable-row" onclick="showProductDetail('Celana Chino', 'Celana chino slim fit', 'Rp 149.000', '450g', '32 (Krem: 30)')">
+                                    <tr class="clickable-row" onclick="openProductBoard('Celana Chino', 'Celana', 'Rp 149.000', '30', 'Celana chino slim fit bahan kasual stretch.', '👖')">
                                         <td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
                                     </tr>
-                                    <tr class="clickable-row" onclick="showProductDetail('Hoodie Oversize', 'Hoodie fleece tebal', 'Rp 175.000', '600g', 'L (Abu-abu: 15), XL (Hitam: 10)')">
+                                    <tr class="clickable-row" onclick="openProductBoard('Hoodie Oversize', 'Jaket', 'Rp 175.000', '25', 'Hoodie fleece tebal hangat dengan fitting oversize.', '🧥')">
                                         <td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
                                     </tr>
-                                    <tr class="clickable-row" onclick="showProductDetail('Dress Floral', 'Dress motif bunga', 'Rp 199.000', '400g', 'M (Pink: 12)')">
+                                    <tr class="clickable-row" onclick="openProductBoard('Dress Floral', 'Dress', 'Rp 199.000', '12', 'Dress motif bunga elegan untuk acara formal & santai.', '👗')">
                                         <td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
                                     </tr>
                                 </tbody>
@@ -454,53 +485,95 @@
         </div>
     </div>
 
-    <!-- MODAL DETAIL PRODUK -->
-    <div id="modalDetailProduk" class="modal-overlay">
-        <div class="modal-card">
-            <div class="modal-header">
-                <h3>Detail Produk</h3>
-                <span class="close-btn" onclick="closeModal('modalDetailProduk')">&times;</span>
-            </div>
-            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 10px; text-align: left;">
-                <p><b>Nama Produk:</b> <span id="detNama">-</span></p>
-                <p><b>Deskripsi:</b> <span id="detDesc">-</span></p>
-                <p><b>Harga Satuan:</b> <span id="detHarga" style="color: var(--primary); font-weight: bold;">-</span></p>
-                <p><b>Berat:</b> <span id="detBerat">-</span></p>
-                <p><b>Varian & Stok (Varian_Produk):</b></p>
-                <div id="detVarian" style="background: var(--bg-main); padding: 10px; border-radius: 8px; font-weight: 500;">-</div>
-            </div>
-            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="closeModal('modalDetailProduk')">Tutup</button>
-        </div>
-    </div>
-
-    <!-- MODAL LIHAT KOLEKSI -->
+    <!-- MODAL KATALOG KOLEKSI (BISA DIKLIK MEMBUKA DETAIL) -->
     <div id="modalKoleksi" class="modal-overlay">
-        <div class="modal-card" style="width: 500px;">
+        <div class="modal-card" style="width: 480px;">
             <div class="modal-header">
                 <h3>Katalog Koleksi Maison Elora</h3>
                 <span class="close-btn" onclick="closeModal('modalKoleksi')">&times;</span>
             </div>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Daftar produk unggulan dari database toko baju online:</p>
-            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">Klik salah satu produk untuk membuka Tampilan Detail Produk:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 320px; overflow-y: auto;">
+                <div class="katalog-item" onclick="openProductBoard('Kaos Polos Basic', 'Kaos', 'Rp 59.000', '90', 'Kaos katun combed 30s adem dan nyaman untuk daily wear.', '👔')">
                     <span><b>Kaos Polos Basic</b> (Combed 30s)</span>
                     <span style="color: var(--primary); font-weight: 600;">Rp 59.000</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                <div class="katalog-item" onclick="openProductBoard('Kemeja Flanel', 'Kemeja', 'Rp 129.000', '45', 'Kemeja flanel motif kotak-kotak elegan dan bahan lembut.', '👔')">
                     <span><b>Kemeja Flanel</b> (Kotak-kotak)</span>
                     <span style="color: var(--primary); font-weight: 600;">Rp 129.000</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                <div class="katalog-item" onclick="openProductBoard('Celana Chino', 'Celana', 'Rp 149.000', '30', 'Celana chino slim fit bahan kasual stretch.', '👖')">
                     <span><b>Celana Chino</b> (Slim Fit)</span>
                     <span style="color: var(--primary); font-weight: 600;">Rp 149.000</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                <div class="katalog-item" onclick="openProductBoard('Hoodie Oversize', 'Jaket', 'Rp 175.000', '25', 'Hoodie fleece tebal hangat dengan fitting oversize.', '🧥')">
                     <span><b>Hoodie Oversize</b> (Fleece)</span>
                     <span style="color: var(--primary); font-weight: 600;">Rp 175.000</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                <div class="katalog-item" onclick="openProductBoard('Dress Floral', 'Dress', 'Rp 199.000', '12', 'Dress motif bunga elegan untuk acara formal & santai.', '👗')">
                     <span><b>Dress Floral</b> (Motif Bunga)</span>
                     <span style="color: var(--primary); font-weight: 600;">Rp 199.000</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMPILAN DETAIL PRODUK (PERSIS GAMBAR PAPAN UI ACUAN) -->
+    <div id="modalDetailBoard" class="modal-overlay">
+        <div class="modal-card" style="width: 620px; padding: 28px;">
+            <div class="modal-header" style="margin-bottom: 20px;">
+                <h3 style="font-size: 15px; color: var(--text-muted);">Tampilan Detail Produk</h3>
+                <span class="close-btn" onclick="closeModal('modalDetailBoard')">&times;</span>
+            </div>
+            
+            <div class="product-detail-grid">
+                <!-- KIRI: GALERI FOTO & FOTO UTAMA -->
+                <div class="product-gallery">
+                    <div class="thumb-list">
+                        <div class="thumb-img active" id="thumbIcon1">👔</div>
+                        <div class="thumb-img">👚</div>
+                        <div class="thumb-img">👕</div>
+                    </div>
+                    <div class="main-img-box" id="boardMainIcon">
+                        👔
+                    </div>
+                </div>
+
+                <!-- KANAN: RINCIAN SPESIFIKASI UI/UX -->
+                <div class="product-info-box">
+                    <h3 id="boardTitle">Kemeja Linen</h3>
+                    <div class="category-tag" id="boardCat">Atasan</div>
+                    <div class="price-tag" id="boardPrice">Rp 220.000</div>
+                    <div class="stock-tag">Stok: <span id="boardStock">12</span></div>
+                    
+                    <p class="desc-text" id="boardDesc">
+                        Kemeja linen dengan bahan adem, cocok untuk segala suasana. Tersedia dalam berbagai ukuran dan warna.
+                    </p>
+
+                    <div class="opt-title">Ukuran</div>
+                    <div class="size-selector">
+                        <div class="size-box" onclick="selectSize(this)">S</div>
+                        <div class="size-box active" onclick="selectSize(this)">M</div>
+                        <div class="size-box" onclick="selectSize(this)">L</div>
+                        <div class="size-box" onclick="selectSize(this)">XL</div>
+                    </div>
+
+                    <div class="opt-title">Warna</div>
+                    <div class="color-selector">
+                        <div class="color-dot active" style="background: #E8D3D1;" onclick="selectColor(this)"></div>
+                        <div class="color-dot" style="background: #9C7170;" onclick="selectColor(this)"></div>
+                        <div class="color-dot" style="background: #637B6E;" onclick="selectColor(this)"></div>
+                        <div class="color-dot" style="background: #3D332A;" onclick="selectColor(this)"></div>
+                    </div>
+
+                    <div class="qty-cart-row">
+                        <div class="qty-box">
+                            <button class="qty-btn" onclick="changeQty(-1)">-</button>
+                            <div class="qty-val" id="qtyVal">1</div>
+                            <button class="qty-btn" onclick="changeQty(1)">+</button>
+                        </div>
+                        <button class="btn" style="flex-grow: 1;" onclick="addToCart()">Tambah ke Keranjang</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -581,14 +654,41 @@
             showToast('Berhasil Logout');
         }
 
-        // DETAIL PRODUK POPUP
-        function showProductDetail(nama, desc, harga, berat, varian) {
-            document.getElementById('detNama').innerText = nama;
-            document.getElementById('detDesc').innerText = desc;
-            document.getElementById('detHarga').innerText = harga;
-            document.getElementById('detBerat').innerText = berat;
-            document.getElementById('detVarian').innerText = varian;
-            openModal('modalDetailProduk');
+        // BUKA TAMPILAN DETAIL PRODUK (BOARD UI UX)
+        function openProductBoard(title, cat, price, stock, desc, icon) {
+            closeModal('modalKoleksi');
+            document.getElementById('boardTitle').innerText = title;
+            document.getElementById('boardCat').innerText = cat;
+            document.getElementById('boardPrice').innerText = price;
+            document.getElementById('boardStock').innerText = stock;
+            document.getElementById('boardDesc').innerText = desc;
+            document.getElementById('boardMainIcon').innerText = icon;
+            document.getElementById('thumbIcon1').innerText = icon;
+            document.getElementById('qtyVal').innerText = '1';
+            openModal('modalDetailBoard');
+        }
+
+        function selectSize(el) {
+            document.querySelectorAll('.size-box').forEach(sb => sb.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function selectColor(el) {
+            document.querySelectorAll('.color-dot').forEach(cd => cd.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function changeQty(delta) {
+            let val = parseInt(document.getElementById('qtyVal').innerText) + delta;
+            if(val < 1) val = 1;
+            document.getElementById('qtyVal').innerText = val;
+        }
+
+        function addToCart() {
+            const title = document.getElementById('boardTitle').innerText;
+            const qty = document.getElementById('qtyVal').innerText;
+            closeModal('modalDetailBoard');
+            showToast(`Berhasil menambahkan ${qty}x '${title}' ke keranjang`);
         }
 
         function switchTab(tabId, element) {
@@ -628,7 +728,7 @@
             const table = document.getElementById('tableProduk').getElementsByTagName('tbody')[0];
             const newRow = table.insertRow();
             newRow.className = 'clickable-row';
-            newRow.onclick = function() { showProductDetail(nama, 'Produk baru ditambahkan', 'Rp ' + hrga, berat, 'Standard (Stok: 20)'); };
+            newRow.onclick = function() { openProductBoard(nama, kat, 'Rp ' + hrga, '20', 'Produk baru ditambahkan ke database.', '👔'); };
             
             const count = table.rows.length;
             newRow.innerHTML = `<td>${count}</td><td><b>${nama}</b></td><td>${kat}</td><td>Rp ${hrga}</td><td>${berat}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>`;
