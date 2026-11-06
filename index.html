@@ -23,6 +23,15 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
 
+        /* LOGIN SCREEN */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-main); display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        .login-card { background: var(--card-bg); padding: 36px; border-radius: 16px; border: 1px solid var(--border); width: 380px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+        .login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+        .login-card p { font-size: 12px; color: var(--text-muted); margin-bottom: 24px; }
+
+        /* APP CONTAINER */
+        #app-container { display: none; width: 100%; height: 100%; }
+
         /* SIDEBAR */
         aside { width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; padding: 24px; flex-shrink: 0; }
         .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; }
@@ -33,14 +42,14 @@
         .nav-menu { display: flex; flex-direction: column; gap: 6px; list-style: none; flex-grow: 1; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
         .nav-item:hover, .nav-item.active { background-color: var(--accent-rose); color: var(--primary); font-weight: 600; }
-        .nav-item.disabled { opacity: 0.5; pointer-events: none; }
 
         /* MAIN CONTAINER */
         .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
         header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; }
         .search-bar { background: var(--bg-main); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; width: 320px; display: flex; align-items: center; gap: 8px; font-size: 13px; }
         .search-bar input { border: none; background: transparent; outline: none; width: 100%; color: var(--text-main); }
-        .user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; }
+        
+        .user-profile { display: flex; align-items: center; gap: 12px; }
         .avatar { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         /* CONTENT VIEWS */
@@ -79,6 +88,9 @@
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         th { background: #F9F5F0; color: var(--text-muted); font-weight: 600; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         td { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .clickable-row { cursor: pointer; transition: 0.2s; }
+        .clickable-row:hover { background-color: var(--bg-main); }
+
         .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; display: inline-block; cursor: pointer; }
         .badge.selesai, .badge.lunas { background: #E2ECE9; color: #3B5D50; }
         .badge.diproses, .badge.pending { background: #FEF3E2; color: #B37D24; }
@@ -98,7 +110,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
         .modal-header h3 { font-size: 16px; font-weight: 700; }
         .close-btn { cursor: pointer; font-size: 18px; color: var(--text-muted); }
-        .form-group { margin-bottom: 14px; }
+        .form-group { margin-bottom: 14px; text-align: left; }
         .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--text-muted); }
         .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: var(--bg-main); }
         
@@ -107,333 +119,357 @@
 </head>
 <body>
 
-    <!-- SIDEBAR -->
-    <aside>
-        <div>
-            <div class="brand">
+    <!-- FORM LOGIN SCREEN -->
+    <div id="login-screen">
+        <div class="login-card">
+            <div class="brand" style="justify-content: center; margin-bottom: 16px;">
                 <div class="brand-logo">ME</div>
-                <div class="brand-title">
+                <div class="brand-title" style="text-align: left;">
                     <h1>Maison Elora</h1>
-                    <p>Style for Every Moment</p>
+                    <p>db_toko_baju_online</p>
                 </div>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
-                <li class="nav-item" onclick="switchTab('produk', this)">👗 Manajemen Produk</li>
-                <li class="nav-item" onclick="switchTab('pelanggan', this)">👥 Manajemen Pelanggan</li>
-                <li class="nav-item" onclick="switchTab('pesanan', this)">📦 Manajemen Pesanan</li>
-                <li class="nav-item" onclick="switchTab('pembayaran', this)">💳 Pembayaran</li>
-                <li class="nav-item" onclick="switchTab('laporan', this)">📈 Laporan Penjualan</li>
-                <li class="nav-item" id="nav-admin" onclick="switchTab('admin', this)">🛡️ Kelola Admin</li>
-            </ul>
+            <h2>Admin Login</h2>
+            <p>Silakan masuk menggunakan kredensial SQL Server</p>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>Pilih Akun / Role SQL</label>
+                    <select id="loginRole" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--bg-main); font-size: 13px;">
+                        <option value="owner">Prabowo (Owner - Full Access)</option>
+                        <option value="staff">Tasi / Uyun / Rina (Staff - Restricted)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="loginUser" required value="prabowo" placeholder="Username database">
+                </div>
+                <div class="form-group">
+                    <label>Password Hash</label>
+                    <input type="password" id="loginPass" required value="Owner@12345!" placeholder="Password">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 8px;">Masuk ke Dashboard</button>
+            </form>
         </div>
-        <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 12px;">
-            DBMS: MS SQL Server<br>Kelompok 5 (Prabowo, Tasi, Uyun)
-        </div>
-    </aside>
+    </div>
 
-    <!-- MAIN CONTAINER -->
-    <div class="main-container">
-        <header>
-            <div class="search-bar">
-                <span>🔍</span>
-                <input type="text" id="globalSearch" placeholder="Cari data di db_toko_baju_online..." onkeyup="filterTables()">
-            </div>
-            
-            <!-- SWITCH ROLE USER -->
-            <div class="user-profile" onclick="switchUserRole()">
-                <div class="avatar" id="userAvatar">P</div>
+    <!-- UTAMA APLIKASI (DASHBOARD) -->
+    <div id="app-container">
+        <div style="display: flex; height: 100%; width: 100%;">
+            <!-- SIDEBAR -->
+            <aside>
                 <div>
-                    <div style="font-size: 13px; font-weight: 600;" id="userName">Prabowo (Owner)</div>
-                    <div style="font-size: 11px; color: var(--text-muted);" id="userRole">Role: Owner (Klik untuk ganti Staff)</div>
-                </div>
-            </div>
-        </header>
-
-        <div class="content">
-
-            <!-- 1. DASHBOARD UTAMA -->
-            <div id="dashboard" class="view-section active">
-                <div class="page-header">
-                    <div class="page-title">
-                        <h2>Dashboard Utama</h2>
-                        <p id="welcomeText">Selamat datang kembali, Admin Prabowo!</p>
-                    </div>
-                </div>
-
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <h3>Total Produk</h3>
-                        <div class="value" id="stat-produk">5</div>
-                        <div class="sub">↑ 5 Kategori Aktif</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Pelanggan</h3>
-                        <div class="value" id="stat-pelanggan">5</div>
-                        <div class="sub">↑ Terdaftar di SQL</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Pesanan</h3>
-                        <div class="value" id="stat-pesanan">5</div>
-                        <div class="sub">↑ 100% Sesuai SQL</div>
-                    </div>
-                    <div class="stat-card">
-                        <h3>Total Penjualan</h3>
-                        <div class="value" id="stat-penjualan">Rp 1.529.000</div>
-                        <div class="sub">↑ Sum Subtotal Detail</div>
-                    </div>
-                </div>
-
-                <div class="dashboard-grid">
-                    <div class="card-box">
-                        <div class="card-title">Grafik Penjualan (Toko Baju Online)</div>
-                        <div class="chart-container" style="height: 150px;">
-                            <svg viewBox="0 0 500 150" style="width: 100%; height: 100%;">
-                                <path d="M 0,110 L 100,80 L 200,95 L 300,40 L 400,60 L 500,20" fill="none" stroke="#9C7170" stroke-width="3"/>
-                                <circle cx="0" cy="110" r="4" fill="#9C7170"/>
-                                <circle cx="100" cy="80" r="4" fill="#9C7170"/>
-                                <circle cx="200" cy="95" r="4" fill="#9C7170"/>
-                                <circle cx="300" cy="40" r="4" fill="#9C7170"/>
-                                <circle cx="400" cy="60" r="4" fill="#9C7170"/>
-                                <circle cx="500" cy="20" r="4" fill="#9C7170"/>
-                            </svg>
+                    <div class="brand">
+                        <div class="brand-logo">ME</div>
+                        <div class="brand-title">
+                            <h1>Maison Elora</h1>
+                            <p>Style for Every Moment</p>
                         </div>
                     </div>
-
-                    <div class="card-box">
-                        <div class="card-title">Pesanan Terbaru</div>
-                        <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div><b>#PS001</b> - Budi Santoso</div>
-                                <div>Rp 293.000 <span class="badge selesai">Selesai</span></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div><b>#PS002</b> - Siti Aminah</div>
-                                <div>Rp 328.000 <span class="badge diproses">Diproses</span></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div><b>#PS003</b> - Andi Wijaya</div>
-                                <div>Rp 267.000 <span class="badge dikirim">Dikirim</span></div>
-                            </div>
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <div><b>#PS004</b> - Dewi Lestari</div>
-                                <div>Rp 304.000 <span class="badge menunggu">Menunggu</span></div>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="nav-menu">
+                        <li class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</li>
+                        <li class="nav-item" onclick="switchTab('produk', this)">👗 Manajemen Produk</li>
+                        <li class="nav-item" onclick="switchTab('pelanggan', this)">👥 Manajemen Pelanggan</li>
+                        <li class="nav-item" onclick="switchTab('pesanan', this)">📦 Manajemen Pesanan</li>
+                        <li class="nav-item" onclick="switchTab('pembayaran', this)">💳 Pembayaran</li>
+                        <li class="nav-item" onclick="switchTab('laporan', this)">📈 Laporan Penjualan</li>
+                        <li class="nav-item" id="nav-admin" onclick="switchTab('admin', this)">🛡️ Kelola Admin</li>
+                    </ul>
                 </div>
+                <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 12px;">
+                    DBMS: MS SQL Server<br>Kelompok 5 (Prabowo, Tasi, Uyun)
+                </div>
+            </aside>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div class="card-box">
-                        <div class="card-title">Stok Produk (vw_stok_produk)</div>
-                        <table style="font-size: 12px;">
-                            <thead>
-                                <tr><th>Produk</th><th>Ukuran</th><th>Warna</th><th>Stok</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>Kaos Polos Basic</td><td>M</td><td>Hitam</td><td><b>50</b></td></tr>
-                                <tr><td>Kaos Polos Basic</td><td>L</td><td>Putih</td><td><b>40</b></td></tr>
-                                <tr><td>Celana Chino</td><td>32</td><td>Krem</td><td><b>30</b></td></tr>
-                                <tr><td>Kemeja Flanel</td><td>M</td><td>Merah</td><td><b>25</b></td></tr>
-                            </tbody>
-                        </table>
+            <!-- MAIN CONTAINER -->
+            <div class="main-container">
+                <header>
+                    <div class="search-bar">
+                        <span>🔍</span>
+                        <input type="text" id="globalSearch" placeholder="Cari data di db_toko_baju_online..." onkeyup="filterTables()">
                     </div>
-
-                    <div class="promo-banner">
+                    
+                    <div class="user-profile">
+                        <div class="avatar" id="headerAvatar">P</div>
                         <div>
-                            <h3>Fashion is a form of self-care</h3>
-                            <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
-                            <button class="btn" style="margin-top: 12px;" onclick="openModal('modalKoleksi')">Lihat Koleksi</button>
+                            <div style="font-size: 13px; font-weight: 600;" id="headerName">Prabowo (Owner)</div>
+                            <div style="font-size: 11px; color: var(--text-muted);" id="headerRole">Role: role_owner</div>
+                        </div>
+                        <button class="btn btn-outline btn-sm" style="margin-left: 12px;" onclick="logout()">Logout</button>
+                    </div>
+                </header>
+
+                <div class="content">
+
+                    <!-- 1. DASHBOARD UTAMA -->
+                    <div id="dashboard" class="view-section active">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h2>Dashboard Utama</h2>
+                                <p id="welcomeText">Selamat datang kembali, Admin Prabowo!</p>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>Total Produk</h3>
+                                <div class="value" id="stat-produk">5</div>
+                                <div class="sub">↑ 5 Kategori Aktif</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Total Pelanggan</h3>
+                                <div class="value" id="stat-pelanggan">5</div>
+                                <div class="sub">↑ Terdaftar di SQL</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Total Pesanan</h3>
+                                <div class="value" id="stat-pesanan">5</div>
+                                <div class="sub">↑ 100% Sesuai SQL</div>
+                            </div>
+                            <div class="stat-card">
+                                <h3>Total Penjualan</h3>
+                                <div class="value" id="stat-penjualan">Rp 1.529.000</div>
+                                <div class="sub">↑ Sum Subtotal Detail</div>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-grid">
+                            <div class="card-box">
+                                <div class="card-title">Grafik Penjualan (Toko Baju Online)</div>
+                                <div class="chart-container" style="height: 150px;">
+                                    <svg viewBox="0 0 500 150" style="width: 100%; height: 100%;">
+                                        <path d="M 0,110 L 100,80 L 200,95 L 300,40 L 400,60 L 500,20" fill="none" stroke="#9C7170" stroke-width="3"/>
+                                        <circle cx="0" cy="110" r="4" fill="#9C7170"/>
+                                        <circle cx="100" cy="80" r="4" fill="#9C7170"/>
+                                        <circle cx="200" cy="95" r="4" fill="#9C7170"/>
+                                        <circle cx="300" cy="40" r="4" fill="#9C7170"/>
+                                        <circle cx="400" cy="60" r="4" fill="#9C7170"/>
+                                        <circle cx="500" cy="20" r="4" fill="#9C7170"/>
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="card-box">
+                                <div class="card-title">Pesanan Terbaru</div>
+                                <div style="display: flex; flex-direction: column; gap: 12px; font-size: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div><b>#PS001</b> - Budi Santoso</div>
+                                        <div>Rp 293.000 <span class="badge selesai">Selesai</span></div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div><b>#PS002</b> - Siti Aminah</div>
+                                        <div>Rp 328.000 <span class="badge diproses">Diproses</span></div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div><b>#PS003</b> - Andi Wijaya</div>
+                                        <div>Rp 267.000 <span class="badge dikirim">Dikirim</span></div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div><b>#PS004</b> - Dewi Lestari</div>
+                                        <div>Rp 304.000 <span class="badge menunggu">Menunggu</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div class="card-box">
+                                <div class="card-title">Stok Produk (vw_stok_produk)</div>
+                                <table style="font-size: 12px;">
+                                    <thead>
+                                        <tr><th>Produk</th><th>Ukuran</th><th>Warna</th><th>Stok</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr><td>Kaos Polos Basic</td><td>M</td><td>Hitam</td><td><b>50</b></td></tr>
+                                        <tr><td>Kaos Polos Basic</td><td>L</td><td>Putih</td><td><b>40</b></td></tr>
+                                        <tr><td>Celana Chino</td><td>32</td><td>Krem</td><td><b>30</b></td></tr>
+                                        <tr><td>Kemeja Flanel</td><td>M</td><td>Merah</td><td><b>25</b></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="promo-banner">
+                                div>
+                                    <h3>Fashion is a form of self-care</h3>
+                                    <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
+                                    <button class="btn" style="margin-top: 12px;" onclick="openModal('modalKoleksi')">Lihat Koleksi</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- 2. PRODUK -->
-            <div id="produk" class="view-section">
-                <div class="page-header">
-                    <div class="page-title"><h2>Data Produk</h2><p>Daftar catalog baju dari tabel Produk</p></div>
-                    <button class="btn" onclick="openModal('modalProduk')">+ Tambah Produk</button>
-                </div>
-                <div class="table-card">
-                    <table id="tableProduk">
-                        <thead>
-                            <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Aksi</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 3. PELANGGAN -->
-            <div id="pelanggan" class="view-section">
-                <div class="page-header">
-                    <div class="page-title"><h2>Data Pelanggan</h2><p>Daftar pembeli terdaftar di SQL</p></div>
-                    <button class="btn" onclick="openModal('modalPelanggan')">+ Tambah Pelanggan</button>
-                </div>
-                <div class="table-card">
-                    <table id="tablePelanggan">
-                        <thead>
-                            <tr><th>ID</th><th>Nama Pelanggan</th><th>Email</th><th>No. Telepon</th><th>Kota</th><th>Aksi</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td>Budi Santoso</td><td>budi@email.com</td><td>081234567890</td><td>Kudus</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>2</td><td>Siti Aminah</td><td>siti@email.com</td><td>082345678901</td><td>Semarang</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>3</td><td>Andi Wijaya</td><td>andi@email.com</td><td>083456789012</td><td>Jepara</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>4</td><td>Dewi Lestari</td><td>dewi@email.com</td><td>084567890123</td><td>Demak</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                            <tr><td>5</td><td>Rizky Pratama</td><td>rizky@email.com</td><td>085678901234</td><td>Pati</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 4. PESANAN -->
-            <div id="pesanan" class="view-section">
-                <div class="page-header">
-                    <div class="page-title"><h2>Data Pesanan</h2><p>Daftar transaksi pesanan baju</p></div>
-                </div>
-                <div class="table-card">
-                    <table id="tablePesanan">
-                        <thead>
-                            <tr><th>Kode</th><th>Pelanggan</th><th>Total Harga</th><th>Alamat Pengiriman</th><th>Status (Klik Ubah)</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>#PS001</td><td>Budi Santoso</td><td>Rp 293.000</td><td>Jl. Merdeka No. 10, Kudus</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
-                            <tr><td>#PS002</td><td>Siti Aminah</td><td>Rp 328.000</td><td>Jl. Melati No. 5, Semarang</td><td><span class="badge diproses" onclick="toggleStatus(this)">Diproses</span></td></tr>
-                            <tr><td>#PS003</td><td>Andi Wijaya</td><td>Rp 267.000</td><td>Jl. Mawar No. 21, Jepara</td><td><span class="badge dikirim" onclick="toggleStatus(this)">Dikirim</span></td></tr>
-                            <tr><td>#PS004</td><td>Dewi Lestari</td><td>Rp 304.000</td><td>Jl. Kenanga No. 7, Demak</td><td><span class="badge menunggu" onclick="toggleStatus(this)">Menunggu Bayar</span></td></tr>
-                            <tr><td>#PS005</td><td>Rizky Pratama</td><td>Rp 337.000</td><td>Jl. Anggrek No. 3, Pati</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 5. PEMBAYARAN -->
-            <div id="pembayaran" class="view-section">
-                <div class="page-header"><div class="page-title"><h2>Data Pembayaran</h2><p>Status transaksi pembayaran</p></div></div>
-                <div class="table-card">
-                    <table id="tablePembayaran">
-                        <thead>
-                            <tr><th>ID Pesanan</th><th>Metode Bayar</th><th>Jumlah Bayar</th><th>Status Bayar (Klik Ubah)</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td>Transfer Bank</td><td>Rp 293.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
-                            <tr><td>2</td><td>E-Wallet</td><td>Rp 328.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
-                            <tr><td>3</td><td>COD</td><td>Rp 267.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
-                            <tr><td>4</td><td>Transfer Bank</td><td>Rp 304.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
-                            <tr><td>5</td><td>Kartu Kredit</td><td>Rp 337.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 6. LAPORAN PENJUALAN -->
-            <div id="laporan" class="view-section">
-                <div class="page-header">
-                    <div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial & Grafik Per Hari</p></div>
-                    <button class="btn" onclick="exportLaporan()">📥 Download Laporan (CSV)</button>
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>Total Pendapatan</h3><div class="value">Rp 1.529.000</div></div>
-                    <div class="stat-card"><h3>Total Transaksi</h3><div class="value">5 Pesanan</div></div>
-                </div>
-
-                <div class="card-box" style="margin-top: 24px;">
-                    <div class="card-title">Grafik Penjualan Per Hari (7 Hari Terakhir)</div>
-                    <div class="chart-container">
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 40px;" title="16 Apr: Rp 293.000"></div>
-                            <div class="chart-label">16 Apr</div>
+                    <!-- 2. PRODUK -->
+                    <div id="produk" class="view-section">
+                        <div class="page-header">
+                            <div class="page-title"><h2>Data Produk</h2><p>Klik salah satu baris produk untuk melihat Detail Produk (Varian & Harga)</p></div>
+                            <button class="btn" onclick="openModal('modalProduk')">+ Tambah Produk</button>
                         </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 70px;" title="17 Apr: Rp 328.000"></div>
-                            <div class="chart-label">17 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 50px;" title="18 Apr: Rp 267.000"></div>
-                            <div class="chart-label">18 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 30px;" title="19 Apr: Rp 150.000"></div>
-                            <div class="chart-label">19 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 65px;" title="20 Apr: Rp 304.000"></div>
-                            <div class="chart-label">20 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 90px;" title="21 Apr: Rp 337.000"></div>
-                            <div class="chart-label">21 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 100px;" title="22 Apr: Rp 420.000"></div>
-                            <div class="chart-label">22 Apr</div>
+                        <div class="table-card">
+                            <table id="tableProduk">
+                                <thead>
+                                    <tr><th>ID</th><th>Nama Produk</th><th>Kategori</th><th>Harga</th><th>Berat</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="clickable-row" onclick="showProductDetail('Kaos Polos Basic', 'Kaos Katun Combed 30s', 'Rp 59.000', '200g', 'M (Hitam: 50), L (Putih: 40)')">
+                                        <td>1</td><td><b>Kaos Polos Basic</b></td><td>Kaos</td><td>Rp 59.000</td><td>200g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
+                                    </tr>
+                                    <tr class="clickable-row" onclick="showProductDetail('Kemeja Flanel', 'Kemeja flanel kotak-kotak', 'Rp 129.000', '350g', 'M (Merah: 25), L (Biru: 20)')">
+                                        <td>2</td><td><b>Kemeja Flanel</b></td><td>Kemeja</td><td>Rp 129.000</td><td>350g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
+                                    </tr>
+                                    <tr class="clickable-row" onclick="showProductDetail('Celana Chino', 'Celana chino slim fit', 'Rp 149.000', '450g', '32 (Krem: 30)')">
+                                        <td>3</td><td><b>Celana Chino</b></td><td>Celana</td><td>Rp 149.000</td><td>450g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
+                                    </tr>
+                                    <tr class="clickable-row" onclick="showProductDetail('Hoodie Oversize', 'Hoodie fleece tebal', 'Rp 175.000', '600g', 'L (Abu-abu: 15), XL (Hitam: 10)')">
+                                        <td>4</td><td><b>Hoodie Oversize</b></td><td>Jaket</td><td>Rp 175.000</td><td>600g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
+                                    </tr>
+                                    <tr class="clickable-row" onclick="showProductDetail('Dress Floral', 'Dress motif bunga', 'Rp 199.000', '400g', 'M (Pink: 12)')">
+                                        <td>5</td><td><b>Dress Floral</b></td><td>Dress</td><td>Rp 199.000</td><td>400g</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- 7. KELOLA ADMIN -->
-            <div id="admin" class="view-section">
-                <div class="page-header"><div class="page-title"><h2>Manajemen Admin (Kelompok 5)</h2><p>Daftar akun admin & Grafik Aktivitas Per Hari</p></div></div>
-                
-                <!-- GRAFIK AKTIVITAS ADMIN PER HARI -->
-                <div class="card-box" style="margin-bottom: 24px;">
-                    <div class="card-title">Grafik Aktivitas Admin Per Hari (Log Transaksi SQL)</div>
-                    <div class="chart-container">
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 30px; background: #637B6E;" title="16 Apr: 3 Aktivitas"></div>
-                            <div class="chart-label">16 Apr</div>
+                    <!-- 3. PELANGGAN -->
+                    <div id="pelanggan" class="view-section">
+                        <div class="page-header">
+                            <div class="page-title"><h2>Data Pelanggan</h2><p>Daftar pembeli terdaftar di SQL</p></div>
+                            <button class="btn" onclick="openModal('modalPelanggan')">+ Tambah Pelanggan</button>
                         </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 80px; background: #637B6E;" title="17 Apr: 8 Aktivitas"></div>
-                            <div class="chart-label">17 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 60px; background: #637B6E;" title="18 Apr: 6 Aktivitas"></div>
-                            <div class="chart-label">18 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 40px; background: #637B6E;" title="19 Apr: 4 Aktivitas"></div>
-                            <div class="chart-label">19 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 90px; background: #637B6E;" title="20 Apr: 9 Aktivitas"></div>
-                            <div class="chart-label">20 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 100px; background: #637B6E;" title="21 Apr: 10 Aktivitas"></div>
-                            <div class="chart-label">21 Apr</div>
-                        </div>
-                        <div class="chart-bar-group">
-                            <div class="chart-bar" style="height: 70px; background: #637B6E;" title="22 Apr: 7 Aktivitas"></div>
-                            <div class="chart-label">22 Apr</div>
+                        <div class="table-card">
+                            <table id="tablePelanggan">
+                                <thead>
+                                    <tr><th>ID</th><th>Nama Pelanggan</th><th>Email</th><th>No. Telepon</th><th>Kota</th><th>Aksi</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>Budi Santoso</td><td>budi@email.com</td><td>081234567890</td><td>Kudus</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                                    <tr><td>2</td><td>Siti Aminah</td><td>siti@email.com</td><td>082345678901</td><td>Semarang</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                                    <tr><td>3</td><td>Andi Wijaya</td><td>andi@email.com</td><td>083456789012</td><td>Jepara</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                                    <tr><td>4</td><td>Dewi Lestari</td><td>dewi@email.com</td><td>084567890123</td><td>Demak</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                                    <tr><td>5</td><td>Rizky Pratama</td><td>rizky@email.com</td><td>085678901234</td><td>Pati</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td></tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
 
-                <div class="table-card">
-                    <table>
-                        <thead>
-                            <tr><th>ID Admin</th><th>Nama Admin</th><th>Username</th><th>Peran (Role SQL)</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr><td>1</td><td>Prabowo</td><td>prabowo</td><td><b>Owner</b> (role_owner)</td></tr>
-                            <tr><td>2</td><td>Tasi</td><td>tasi</td><td><b>Staff</b> (role_staff)</td></tr>
-                            <tr><td>3</td><td>Uyun</td><td>uyun</td><td><b>Staff</b> (role_staff)</td></tr>
-                            <tr><td>4</td><td>Rina</td><td>rina</td><td><b>Staff</b> (role_staff)</td></tr>
-                            <tr><td>5</td><td>Dimas</td><td>dimas</td><td><b>Staff</b> (role_staff)</td></tr>
-                        </tbody>
-                    </table>
+                    <!-- 4. PESANAN -->
+                    <div id="pesanan" class="view-section">
+                        <div class="page-header">
+                            <div class="page-title"><h2>Data Pesanan</h2><p>Daftar transaksi pesanan baju</p></div>
+                        </div>
+                        <div class="table-card">
+                            <table id="tablePesanan">
+                                <thead>
+                                    <tr><th>Kode</th><th>Pelanggan</th><th>Total Harga</th><th>Alamat Pengiriman</th><th>Status (Klik Ubah)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>#PS001</td><td>Budi Santoso</td><td>Rp 293.000</td><td>Jl. Merdeka No. 10, Kudus</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
+                                    <tr><td>#PS002</td><td>Siti Aminah</td><td>Rp 328.000</td><td>Jl. Melati No. 5, Semarang</td><td><span class="badge diproses" onclick="toggleStatus(this)">Diproses</span></td></tr>
+                                    <tr><td>#PS003</td><td>Andi Wijaya</td><td>Rp 267.000</td><td>Jl. Mawar No. 21, Jepara</td><td><span class="badge dikirim" onclick="toggleStatus(this)">Dikirim</span></td></tr>
+                                    <tr><td>#PS004</td><td>Dewi Lestari</td><td>Rp 304.000</td><td>Jl. Kenanga No. 7, Demak</td><td><span class="badge menunggu" onclick="toggleStatus(this)">Menunggu Bayar</span></td></tr>
+                                    <tr><td>#PS005</td><td>Rizky Pratama</td><td>Rp 337.000</td><td>Jl. Anggrek No. 3, Pati</td><td><span class="badge selesai" onclick="toggleStatus(this)">Selesai</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 5. PEMBAYARAN -->
+                    <div id="pembayaran" class="view-section">
+                        <div class="page-header"><div class="page-title"><h2>Data Pembayaran</h2><p>Status transaksi pembayaran</p></div></div>
+                        <div class="table-card">
+                            <table id="tablePembayaran">
+                                <thead>
+                                    <tr><th>ID Pesanan</th><th>Metode Bayar</th><th>Jumlah Bayar</th><th>Status Bayar (Klik Ubah)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>Transfer Bank</td><td>Rp 293.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
+                                    <tr><td>2</td><td>E-Wallet</td><td>Rp 328.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
+                                    <tr><td>3</td><td>COD</td><td>Rp 267.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
+                                    <tr><td>4</td><td>Transfer Bank</td><td>Rp 304.000</td><td><span class="badge pending" onclick="toggleBayar(this)">Pending</span></td></tr>
+                                    <tr><td>5</td><td>Kartu Kredit</td><td>Rp 337.000</td><td><span class="badge lunas" onclick="toggleBayar(this)">Lunas</span></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 6. LAPORAN PENJUALAN -->
+                    <div id="laporan" class="view-section">
+                        <div class="page-header">
+                            <div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial & Grafik Per Hari</p></div>
+                            <button class="btn" onclick="exportLaporan()">📥 Download Laporan (CSV)</button>
+                        </div>
+                        <div class="stats-grid">
+                            <div class="stat-card"><h3>Total Pendapatan</h3><div class="value">Rp 1.529.000</div></div>
+                            <div class="stat-card"><h3>Total Transaksi</h3><div class="value">5 Pesanan</div></div>
+                        </div>
+
+                        <div class="card-box" style="margin-top: 24px;">
+                            <div class="card-title">Grafik Penjualan Per Hari (7 Hari Terakhir)</div>
+                            <div class="chart-container">
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 40px;" title="16 Apr: Rp 293.000"></div><div class="chart-label">16 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 70px;" title="17 Apr: Rp 328.000"></div><div class="chart-label">17 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 50px;" title="18 Apr: Rp 267.000"></div><div class="chart-label">18 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 30px;" title="19 Apr: Rp 150.000"></div><div class="chart-label">19 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 65px;" title="20 Apr: Rp 304.000"></div><div class="chart-label">20 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 90px;" title="21 Apr: Rp 337.000"></div><div class="chart-label">21 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 100px;" title="22 Apr: Rp 420.000"></div><div class="chart-label">22 Apr</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 7. KELOLA ADMIN -->
+                    <div id="admin" class="view-section">
+                        <div class="page-header"><div class="page-title"><h2>Manajemen Admin (Kelompok 5)</h2><p>Daftar akun admin & Grafik Aktivitas Per Hari</p></div></div>
+                        
+                        <div class="card-box" style="margin-bottom: 24px;">
+                            <div class="card-title">Grafik Aktivitas Admin Per Hari (Log Transaksi SQL)</div>
+                            <div class="chart-container">
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 30px; background: #637B6E;" title="3 Aktivitas"></div><div class="chart-label">16 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 80px; background: #637B6E;" title="8 Aktivitas"></div><div class="chart-label">17 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 60px; background: #637B6E;" title="6 Aktivitas"></div><div class="chart-label">18 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 40px; background: #637B6E;" title="4 Aktivitas"></div><div class="chart-label">19 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 90px; background: #637B6E;" title="9 Aktivitas"></div><div class="chart-label">20 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 100px; background: #637B6E;" title="10 Aktivitas"></div><div class="chart-label">21 Apr</div></div>
+                                <div class="chart-bar-group"><div class="chart-bar" style="height: 70px; background: #637B6E;" title="7 Aktivitas"></div><div class="chart-label">22 Apr</div></div>
+                            </div>
+                        </div>
+
+                        <div class="table-card">
+                            <table>
+                                <thead>
+                                    <tr><th>ID Admin</th><th>Nama Admin</th><th>Username</th><th>Peran (Role SQL)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1</td><td>Prabowo</td><td>prabowo</td><td><b>Owner</b> (role_owner)</td></tr>
+                                    <tr><td>2</td><td>Tasi</td><td>tasi</td><td><b>Staff</b> (role_staff)</td></tr>
+                                    <tr><td>3</td><td>Uyun</td><td>uyun</td><td><b>Staff</b> (role_staff)</td></tr>
+                                    <tr><td>4</td><td>Rina</td><td>rina</td><td><b>Staff</b> (role_staff)</td></tr>
+                                    <tr><td>5</td><td>Dimas</td><td>dimas</td><td><b>Staff</b> (role_staff)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </div>
+        </div>
+    </div>
 
+    <!-- MODAL DETAIL PRODUK -->
+    <div id="modalDetailProduk" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Detail Produk</h3>
+                <span class="close-btn" onclick="closeModal('modalDetailProduk')">&times;</span>
+            </div>
+            <div style="font-size: 13px; display: flex; flex-direction: column; gap: 10px; text-align: left;">
+                <p><b>Nama Produk:</b> <span id="detNama">-</span></p>
+                <p><b>Deskripsi:</b> <span id="detDesc">-</span></p>
+                <p><b>Harga Satuan:</b> <span id="detHarga" style="color: var(--primary); font-weight: bold;">-</span></p>
+                <p><b>Berat:</b> <span id="detBerat">-</span></p>
+                <p><b>Varian & Stok (Varian_Produk):</b></p>
+                <div id="detVarian" style="background: var(--bg-main); padding: 10px; border-radius: 8px; font-weight: 500;">-</div>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="closeModal('modalDetailProduk')">Tutup</button>
         </div>
     </div>
 
@@ -507,33 +543,52 @@
     <div id="toast">Berhasil!</div>
 
     <script>
-        let isOwner = true;
+        // LOGIN HANDLER
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('loginRole').value;
+            const user = document.getElementById('loginUser').value;
 
-        // SWITCH USER ROLE (OWNER VS STAFF)
-        function switchUserRole() {
-            isOwner = !isOwner;
-            const avatar = document.getElementById('userAvatar');
-            const name = document.getElementById('userName');
-            const roleText = document.getElementById('userRole');
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-container').style.display = 'block';
+
+            const avatar = document.getElementById('headerAvatar');
+            const name = document.getElementById('headerName');
+            const roleText = document.getElementById('headerRole');
             const welcomeText = document.getElementById('welcomeText');
             const navAdmin = document.getElementById('nav-admin');
 
-            if(isOwner) {
+            if(role === 'owner') {
                 avatar.innerText = 'P';
-                name.innerText = 'Prabowo (Owner)';
-                roleText.innerText = 'Role: Owner (Klik untuk ganti Staff)';
-                welcomeText.innerText = 'Selamat datang kembali, Admin Prabowo!';
+                name.innerText = user.charAt(0).toUpperCase() + user.slice(1) + ' (Owner)';
+                roleText.innerText = 'Role: role_owner (Full Access)';
+                welcomeText.innerText = `Selamat datang kembali, Admin ${user}!`;
                 navAdmin.style.display = 'flex';
-                showToast('Login sebagai: Prabowo (Owner - Full Access)');
+                showToast('Login Berhasil sebagai Owner');
             } else {
                 avatar.innerText = 'T';
                 name.innerText = 'Tasi / Uyun (Staff)';
-                roleText.innerText = 'Role: Staff (DENY ALL ON Admin)';
+                roleText.innerText = 'Role: role_staff (Restricted)';
                 welcomeText.innerText = 'Selamat datang kembali, Staff Tasi!';
                 navAdmin.style.display = 'none';
-                showToast('Login sebagai: Staff (Akses Admin Dibatasi)');
-                switchTab('dashboard', document.querySelector('.nav-item'));
+                showToast('Login Berhasil sebagai Staff');
             }
+        }
+
+        function logout() {
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('login-screen').style.display = 'flex';
+            showToast('Berhasil Logout');
+        }
+
+        // DETAIL PRODUK POPUP
+        function showProductDetail(nama, desc, harga, berat, varian) {
+            document.getElementById('detNama').innerText = nama;
+            document.getElementById('detDesc').innerText = desc;
+            document.getElementById('detHarga').innerText = harga;
+            document.getElementById('detBerat').innerText = berat;
+            document.getElementById('detVarian').innerText = varian;
+            openModal('modalDetailProduk');
         }
 
         function switchTab(tabId, element) {
@@ -572,9 +627,11 @@
 
             const table = document.getElementById('tableProduk').getElementsByTagName('tbody')[0];
             const newRow = table.insertRow();
-            const count = table.rows.length;
+            newRow.className = 'clickable-row';
+            newRow.onclick = function() { showProductDetail(nama, 'Produk baru ditambahkan', 'Rp ' + hrga, berat, 'Standard (Stok: 20)'); };
             
-            newRow.innerHTML = `<td>${count}</td><td><b>${nama}</b></td><td>${kat}</td><td>Rp ${hrga}</td><td>${berat}</td><td><button class="btn btn-outline btn-sm" onclick="hapusBaris(this)">Hapus</button></td>`;
+            const count = table.rows.length;
+            newRow.innerHTML = `<td>${count}</td><td><b>${nama}</b></td><td>${kat}</td><td>Rp ${hrga}</td><td>${berat}</td><td><button class="btn btn-outline btn-sm" onclick="event.stopPropagation(); hapusBaris(this)">Hapus</button></td>`;
             
             closeModal('modalProduk');
             showToast(`Produk '${nama}' Berhasil Ditambahkan!`);
