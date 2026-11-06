@@ -33,13 +33,14 @@
         .nav-menu { display: flex; flex-direction: column; gap: 6px; list-style: none; flex-grow: 1; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 8px; font-size: 14px; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
         .nav-item:hover, .nav-item.active { background-color: var(--accent-rose); color: var(--primary); font-weight: 600; }
+        .nav-item.disabled { opacity: 0.5; pointer-events: none; }
 
         /* MAIN CONTAINER */
         .main-container { flex-grow: 1; display: flex; flex-direction: column; overflow: hidden; }
         header { height: 70px; background: var(--card-bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; flex-shrink: 0; }
         .search-bar { background: var(--bg-main); border: 1px solid var(--border); border-radius: 20px; padding: 8px 16px; width: 320px; display: flex; align-items: center; gap: 8px; font-size: 13px; }
         .search-bar input { border: none; background: transparent; outline: none; width: 100%; color: var(--text-main); }
-        .user-profile { display: flex; align-items: center; gap: 12px; }
+        .user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; position: relative; }
         .avatar { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
         /* CONTENT VIEWS */
@@ -84,7 +85,12 @@
         .badge.dikirim { background: #E8F1F5; color: #326280; }
         .badge.menunggu { background: #FCE8E6; color: #A63A3A; }
 
-        .chart-container { height: 180px; width: 100%; }
+        /* CHART BAR DESIGN */
+        .chart-container { height: 180px; width: 100%; display: flex; align-items: flex-end; justify-content: space-around; padding-top: 20px; border-bottom: 1px solid var(--border); }
+        .chart-bar-group { display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+        .chart-bar { width: 28px; background: var(--primary); border-radius: 6px 6px 0 0; transition: 0.3s; cursor: pointer; }
+        .chart-bar:hover { background: var(--primary-hover); transform: scaleY(1.05); }
+        .chart-label { font-size: 10px; color: var(--text-muted); }
 
         /* MODAL POPUP */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); display: none; justify-content: center; align-items: center; z-index: 2000; }
@@ -118,7 +124,7 @@
                 <li class="nav-item" onclick="switchTab('pesanan', this)">📦 Manajemen Pesanan</li>
                 <li class="nav-item" onclick="switchTab('pembayaran', this)">💳 Pembayaran</li>
                 <li class="nav-item" onclick="switchTab('laporan', this)">📈 Laporan Penjualan</li>
-                <li class="nav-item" onclick="switchTab('admin', this)">🛡️ Kelola Admin</li>
+                <li class="nav-item" id="nav-admin" onclick="switchTab('admin', this)">🛡️ Kelola Admin</li>
             </ul>
         </div>
         <div style="font-size: 11px; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 12px;">
@@ -133,11 +139,13 @@
                 <span>🔍</span>
                 <input type="text" id="globalSearch" placeholder="Cari data di db_toko_baju_online..." onkeyup="filterTables()">
             </div>
-            <div class="user-profile">
-                <div class="avatar">P</div>
+            
+            <!-- SWITCH ROLE USER -->
+            <div class="user-profile" onclick="switchUserRole()">
+                <div class="avatar" id="userAvatar">P</div>
                 <div>
-                    <div style="font-size: 13px; font-weight: 600;">Prabowo (Owner)</div>
-                    <div style="font-size: 11px; color: var(--text-muted);">db_toko_baju_online</div>
+                    <div style="font-size: 13px; font-weight: 600;" id="userName">Prabowo (Owner)</div>
+                    <div style="font-size: 11px; color: var(--text-muted);" id="userRole">Role: Owner (Klik untuk ganti Staff)</div>
                 </div>
             </div>
         </header>
@@ -149,7 +157,7 @@
                 <div class="page-header">
                     <div class="page-title">
                         <h2>Dashboard Utama</h2>
-                        <p>Selamat datang kembali, Admin Prabowo!</p>
+                        <p id="welcomeText">Selamat datang kembali, Admin Prabowo!</p>
                     </div>
                 </div>
 
@@ -179,7 +187,7 @@
                 <div class="dashboard-grid">
                     <div class="card-box">
                         <div class="card-title">Grafik Penjualan (Toko Baju Online)</div>
-                        <div class="chart-container">
+                        <div class="chart-container" style="height: 150px;">
                             <svg viewBox="0 0 500 150" style="width: 100%; height: 100%;">
                                 <path d="M 0,110 L 100,80 L 200,95 L 300,40 L 400,60 L 500,20" fill="none" stroke="#9C7170" stroke-width="3"/>
                                 <circle cx="0" cy="110" r="4" fill="#9C7170"/>
@@ -235,7 +243,7 @@
                         <div>
                             <h3>Fashion is a form of self-care</h3>
                             <p>Sistem Informasi Toko Baju Online - Maison Elora</p>
-                            <button class="btn" style="margin-top: 12px;" onclick="showToast('Katalog Koleksi Berhasil Dibuka')">Lihat Koleksi</button>
+                            <button class="btn" style="margin-top: 12px;" onclick="openModal('modalKoleksi')">Lihat Koleksi</button>
                         </div>
                     </div>
                 </div>
@@ -328,18 +336,88 @@
             <!-- 6. LAPORAN PENJUALAN -->
             <div id="laporan" class="view-section">
                 <div class="page-header">
-                    <div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial</p></div>
+                    <div class="page-title"><h2>Laporan Penjualan</h2><p>Ringkasan performa finansial & Grafik Per Hari</p></div>
                     <button class="btn" onclick="exportLaporan()">📥 Download Laporan (CSV)</button>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card"><h3>Total Pendapatan</h3><div class="value">Rp 1.529.000</div></div>
                     <div class="stat-card"><h3>Total Transaksi</h3><div class="value">5 Pesanan</div></div>
                 </div>
+
+                <div class="card-box" style="margin-top: 24px;">
+                    <div class="card-title">Grafik Penjualan Per Hari (7 Hari Terakhir)</div>
+                    <div class="chart-container">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 40px;" title="16 Apr: Rp 293.000"></div>
+                            <div class="chart-label">16 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 70px;" title="17 Apr: Rp 328.000"></div>
+                            <div class="chart-label">17 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 50px;" title="18 Apr: Rp 267.000"></div>
+                            <div class="chart-label">18 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 30px;" title="19 Apr: Rp 150.000"></div>
+                            <div class="chart-label">19 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 65px;" title="20 Apr: Rp 304.000"></div>
+                            <div class="chart-label">20 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 90px;" title="21 Apr: Rp 337.000"></div>
+                            <div class="chart-label">21 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 100px;" title="22 Apr: Rp 420.000"></div>
+                            <div class="chart-label">22 Apr</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- 7. KELOLA ADMIN -->
             <div id="admin" class="view-section">
-                <div class="page-header"><div class="page-title"><h2>Manajemen Admin (Kelompok 5)</h2><p>Daftar akun admin & role SQL</p></div></div>
+                <div class="page-header"><div class="page-title"><h2>Manajemen Admin (Kelompok 5)</h2><p>Daftar akun admin & Grafik Aktivitas Per Hari</p></div></div>
+                
+                <!-- GRAFIK AKTIVITAS ADMIN PER HARI -->
+                <div class="card-box" style="margin-bottom: 24px;">
+                    <div class="card-title">Grafik Aktivitas Admin Per Hari (Log Transaksi SQL)</div>
+                    <div class="chart-container">
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 30px; background: #637B6E;" title="16 Apr: 3 Aktivitas"></div>
+                            <div class="chart-label">16 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 80px; background: #637B6E;" title="17 Apr: 8 Aktivitas"></div>
+                            <div class="chart-label">17 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 60px; background: #637B6E;" title="18 Apr: 6 Aktivitas"></div>
+                            <div class="chart-label">18 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 40px; background: #637B6E;" title="19 Apr: 4 Aktivitas"></div>
+                            <div class="chart-label">19 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 90px; background: #637B6E;" title="20 Apr: 9 Aktivitas"></div>
+                            <div class="chart-label">20 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 100px; background: #637B6E;" title="21 Apr: 10 Aktivitas"></div>
+                            <div class="chart-label">21 Apr</div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <div class="chart-bar" style="height: 70px; background: #637B6E;" title="22 Apr: 7 Aktivitas"></div>
+                            <div class="chart-label">22 Apr</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-card">
                     <table>
                         <thead>
@@ -356,6 +434,39 @@
                 </div>
             </div>
 
+        </div>
+    </div>
+
+    <!-- MODAL LIHAT KOLEKSI -->
+    <div id="modalKoleksi" class="modal-overlay">
+        <div class="modal-card" style="width: 500px;">
+            <div class="modal-header">
+                <h3>Katalog Koleksi Maison Elora</h3>
+                <span class="close-btn" onclick="closeModal('modalKoleksi')">&times;</span>
+            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Daftar produk unggulan dari database toko baju online:</p>
+            <div style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                    <span><b>Kaos Polos Basic</b> (Combed 30s)</span>
+                    <span style="color: var(--primary); font-weight: 600;">Rp 59.000</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                    <span><b>Kemeja Flanel</b> (Kotak-kotak)</span>
+                    <span style="color: var(--primary); font-weight: 600;">Rp 129.000</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                    <span><b>Celana Chino</b> (Slim Fit)</span>
+                    <span style="color: var(--primary); font-weight: 600;">Rp 149.000</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                    <span><b>Hoodie Oversize</b> (Fleece)</span>
+                    <span style="color: var(--primary); font-weight: 600;">Rp 175.000</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-main); border-radius: 8px; font-size: 13px;">
+                    <span><b>Dress Floral</b> (Motif Bunga)</span>
+                    <span style="color: var(--primary); font-weight: 600;">Rp 199.000</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -396,7 +507,35 @@
     <div id="toast">Berhasil!</div>
 
     <script>
-        // NAVIGATION & TAB SWITCHING
+        let isOwner = true;
+
+        // SWITCH USER ROLE (OWNER VS STAFF)
+        function switchUserRole() {
+            isOwner = !isOwner;
+            const avatar = document.getElementById('userAvatar');
+            const name = document.getElementById('userName');
+            const roleText = document.getElementById('userRole');
+            const welcomeText = document.getElementById('welcomeText');
+            const navAdmin = document.getElementById('nav-admin');
+
+            if(isOwner) {
+                avatar.innerText = 'P';
+                name.innerText = 'Prabowo (Owner)';
+                roleText.innerText = 'Role: Owner (Klik untuk ganti Staff)';
+                welcomeText.innerText = 'Selamat datang kembali, Admin Prabowo!';
+                navAdmin.style.display = 'flex';
+                showToast('Login sebagai: Prabowo (Owner - Full Access)');
+            } else {
+                avatar.innerText = 'T';
+                name.innerText = 'Tasi / Uyun (Staff)';
+                roleText.innerText = 'Role: Staff (DENY ALL ON Admin)';
+                welcomeText.innerText = 'Selamat datang kembali, Staff Tasi!';
+                navAdmin.style.display = 'none';
+                showToast('Login sebagai: Staff (Akses Admin Dibatasi)');
+                switchTab('dashboard', document.querySelector('.nav-item'));
+            }
+        }
+
         function switchTab(tabId, element) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -404,7 +543,6 @@
             element.classList.add('active');
         }
 
-        // TOAST NOTIFICATION
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg;
@@ -412,7 +550,6 @@
             setTimeout(() => { t.style.display = 'none'; }, 2500);
         }
 
-        // SEARCH GLOBAL FILTER
         function filterTables() {
             const query = document.getElementById('globalSearch').value.toLowerCase();
             const activeView = document.querySelector('.view-section.active');
@@ -423,11 +560,9 @@
             });
         }
 
-        // MODAL CONTROL
         function openModal(id) { document.getElementById(id).style.display = 'flex'; }
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // ADD PRODUCT
         function tambahProduk(e) {
             e.preventDefault();
             const nama = document.getElementById('pNama').value;
@@ -447,7 +582,6 @@
             e.target.reset();
         }
 
-        // ADD CUSTOMER
         function tambahPelanggan(e) {
             e.preventDefault();
             const nama = document.getElementById('cNama').value;
@@ -467,7 +601,6 @@
             e.target.reset();
         }
 
-        // DELETE ROW
         function hapusBaris(btn) {
             if(confirm('Apakah Anda yakin ingin menghapus data ini dari UI?')) {
                 const row = btn.parentNode.parentNode;
@@ -476,7 +609,6 @@
             }
         }
 
-        // TOGGLE STATUS PESANAN (UX INTERAKTIF)
         function toggleStatus(badge) {
             if(badge.innerText === 'Selesai') {
                 badge.innerText = 'Diproses';
@@ -494,7 +626,6 @@
             showToast(`Status Pesanan diubah ke: ${badge.innerText}`);
         }
 
-        // TOGGLE STATUS BAYAR
         function toggleBayar(badge) {
             if(badge.innerText === 'Lunas') {
                 badge.innerText = 'Pending';
@@ -506,7 +637,6 @@
             showToast(`Status Bayar diubah ke: ${badge.innerText}`);
         }
 
-        // DOWNLOAD CSV LAPORAN
         function exportLaporan() {
             const csvContent = "data:text/csv;charset=utf-8,Laporan Penjualan Maison Elora\nTotal Pendapatan,Rp 1.529.000\nTotal Pesanan,5\nStatus,OK";
             const encodedUri = encodeURI(csvContent);
